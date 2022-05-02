@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UserController {
 
     private final UserService userService;
@@ -34,15 +35,15 @@ public class UserController {
     }
 
     @Operation(summary = "Authenticate user")
-    @PostMapping("/api/auth/{username}")
+    @PostMapping("/api/auth")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Authentication successful",
                     content = @Content),
             @ApiResponse(responseCode = "401", description = "Authentication failed",
                     content = @Content)
     })
-    public User authenticateUser(@PathVariable String username, @RequestBody String password) {
-        return userService.authenticateUser(username, password);
+    public User authenticateUser(@RequestBody User user) {
+        return userService.authenticateUser(user.getUsername(), user.getPassword());
     }
 
     @Operation(summary = "Get user by its id")
