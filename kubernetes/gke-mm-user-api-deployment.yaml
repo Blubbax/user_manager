@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mm-user-api
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: mm-user-api
+      tier: api
+  template:
+    metadata:
+      labels:
+        app: mm-user-api
+        tier: api
+    spec:
+      containers:
+      - image: np123dev/user_manager:latest
+        name: mm-user-api
+        ports:
+        - containerPort: 8081
+          protocol: TCP
+        env:
+        - name: DB_HOST
+          value: $(MM_USER_MYSQL_SERVICE_HOST)
+        - name: DB_PORT
+          value: $(MM_USER_MYSQL_SERVICE_PORT)
+        - name: DB_NAME
+          value: 'user'
+        - name: DB_PASSWORD
+          value: '1234'
+        - name: DB_USERNAME
+          value: 'root'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mm-user-api
+  namespace: default
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  ports:
+    - port: 8081
+      protocol: TCP
+      targetPort: 8081
+  selector:
+    app: mm-user-api
+    tier: api
+  type: LoadBalancer
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mm-user-api-ingress
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "user-api-ip"
+spec:
+  defaultBackend:
+    service:
+      name: mm-user-api
+      port:
+        number: 8081
+---
