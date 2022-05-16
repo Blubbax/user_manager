@@ -22,6 +22,12 @@ public class UserController {
         this.userService = userService;
     }
 
+    @Operation(summary = "Get root system info")
+    @GetMapping("/")
+    public String getRoot() {
+        return "User Manager API";
+    }
+
     @Operation(summary = "Get current server status")
     @GetMapping("/api")
     public String getInfo() {
