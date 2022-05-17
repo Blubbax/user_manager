@@ -38,18 +38,18 @@ spec:
             scheme: HTTP
           initialDelaySeconds: 20
           periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /api/health/liveness
-              port: 8081
-              scheme: HTTP
-            initialDelaySeconds: 30
-            periodSeconds: 10
-          resources:
-            limits:
-              cpu: 400m
-            requests:
-              cpu: 200m
+        livenessProbe:
+          httpGet:
+            path: /api/health/liveness
+            port: 8081
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: 400m
+          requests:
+            cpu: 200m
 ---
 apiVersion: v1
 kind: Service
@@ -80,4 +80,17 @@ spec:
       name: mm-user-api
       port:
         number: 8081
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: mm-user-api-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: mm-user-api
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 75
 ---
