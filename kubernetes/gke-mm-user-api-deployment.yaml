@@ -31,6 +31,25 @@ spec:
           value: '1234'
         - name: DB_USERNAME
           value: 'root'
+        readinessProbe:
+          httpGet:
+            path: /api/health/readiness
+            port: 8081
+            scheme: HTTP
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /api/health/liveness
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: 400m
+            requests:
+              cpu: 200m
 ---
 apiVersion: v1
 kind: Service
@@ -47,7 +66,7 @@ spec:
   selector:
     app: mm-user-api
     tier: api
-  type: LoadBalancer
+  type: ClusterIP
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
