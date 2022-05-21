@@ -1,13 +1,13 @@
 package com.blubbax.esa.userManager.User.entity;
 
+
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
@@ -18,7 +18,12 @@ public class User {
     private @Id @GeneratedValue Long id;
 
     @Column(unique = true)
+    @NotEmpty
+    @NotBlank
     private String username;
+
+    @NotEmpty
+    @NotBlank
     @Size(min=8)
     private String password;
 

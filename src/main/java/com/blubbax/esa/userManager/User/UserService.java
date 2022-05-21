@@ -2,6 +2,7 @@ package com.blubbax.esa.userManager.User;
 
 import com.blubbax.esa.userManager.User.entity.User;
 import com.blubbax.esa.userManager.User.exception.AuthFailedException;
+import com.blubbax.esa.userManager.User.exception.DuplicateUserException;
 import com.blubbax.esa.userManager.User.exception.UserNotFoundException;
 import com.blubbax.esa.userManager.User.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,23 +36,35 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    public User saveUserDataset(@RequestBody User transaction) {
-        return userRepository.save(transaction);
+    public User saveUserDataset(User user) {
+        if (!userRepository.existsByUsername(user.getUsername())){
+            return userRepository.save(user);
+        } else {
+            throw new DuplicateUserException(user.getUsername());
+        }
     }
 
-    public User updateUserDataset(@PathVariable long id, @RequestBody User newUser) {
+    public User updateUserDataset(long id, User newUser) {
         return userRepository.findById(id)
                 .map(user -> {
-                    user.setUsername(newUser.getUsername());
-                    user.setPassword(newUser.getPassword());
-                    return userRepository.save(user);
+                    if (userRepository.findByUsername(newUser.getUsername()) == user) {
+                        user.setUsername(newUser.getUsername());
+                        user.setPassword(newUser.getPassword());
+                        return userRepository.save(user);
+                    } else {
+                        throw new DuplicateUserException(newUser.getUsername());
+                    }
                 }).orElseGet(() -> {
-                    newUser.setId(id);
-                    return userRepository.save(newUser);
+                    if (!userRepository.existsByUsername(newUser.getUsername())) {
+                        newUser.setId(id);
+                        return userRepository.save(newUser);
+                    } else {
+                        throw new DuplicateUserException(newUser.getUsername());
+                    }
                 });
     }
 
-    public void deleteUserDataset(@PathVariable Long id) throws EmptyResultDataAccessException {
+    public void deleteUserDataset(Long id) throws EmptyResultDataAccessException {
         userRepository.deleteById(id);
     }
 

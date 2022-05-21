@@ -1,5 +1,6 @@
 package com.blubbax.esa.userManager.User;
 
+import com.blubbax.esa.userManager.User.exception.DuplicateUserException;
 import com.blubbax.esa.userManager.User.exception.UserNotFoundException;
 import com.blubbax.esa.userManager.User.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -8,8 +9,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @RestController
@@ -45,10 +49,12 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Authentication successful",
                     content = @Content),
+            @ApiResponse(responseCode = "400", description = "User not valid",
+                    content = @Content),
             @ApiResponse(responseCode = "401", description = "Authentication failed",
                     content = @Content)
     })
-    public User authenticateUser(@RequestBody User user) {
+    public User authenticateUser(@RequestBody @Valid User user) {
         return userService.authenticateUser(user.getUsername(), user.getPassword());
     }
 
@@ -66,13 +72,25 @@ public class UserController {
 
     @Operation(summary = "Save new user entry")
     @PostMapping("/api/user")
-    public User saveUserDataset(@RequestBody User user) {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User successfully added",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "User not valid",
+                    content = @Content)
+    })
+    public User saveUserDataset(@RequestBody @Valid User user) {
         return userService.saveUserDataset(user);
     }
 
     @Operation(summary = "Update user by its id")
     @PutMapping("/api/user/{id}")
-    public User updateUserDataset(@PathVariable Long id, @RequestBody User newUser) {
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User successfully updated",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "User not valid",
+                    content = @Content)
+    })
+    public User updateUserDataset(@PathVariable Long id, @RequestBody @Valid User newUser) {
         return userService.updateUserDataset(id, newUser);
     }
 
