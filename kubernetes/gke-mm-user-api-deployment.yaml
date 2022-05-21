@@ -14,6 +14,11 @@ spec:
         app: mm-user-api
         tier: api
     spec:
+      strategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 0
+          maxSurge: 2
       containers:
       - image: np123dev/user_manager:latest
         name: mm-user-api
