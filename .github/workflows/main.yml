@@ -60,6 +60,6 @@ jobs:
           
       - name: Deploy
         run: |-
-          kubectl apply -f kubernetes/gke-mm-user-api-deployment.yaml
+          kubectl apply -k kubernetes/user_manager/overlays/gke
           kubectl set image deployment/$DEPLOYMENT_NAME mm-user-api=np123dev/user_manager:1.0.${{ github.run_number }}
           kubectl rollout status deployment/$DEPLOYMENT_NAME
