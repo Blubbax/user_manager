@@ -47,7 +47,7 @@ public class UserService {
     public User updateUserDataset(long id, User newUser) {
         return userRepository.findById(id)
                 .map(user -> {
-                    if (userRepository.findByUsername(newUser.getUsername()) == user) {
+                    if (!user.getUsername().equals(newUser.getUsername()) && userRepository.findByUsername(newUser.getUsername()) == null) {
                         user.setUsername(newUser.getUsername());
                         user.setPassword(newUser.getPassword());
                         return userRepository.save(user);
