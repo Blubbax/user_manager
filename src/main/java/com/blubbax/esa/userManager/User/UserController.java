@@ -64,7 +64,7 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Authentication failed",
                     content = @Content)
     })
-    public User authenticateUser(@RequestBody @Valid User user) {
+    public User authenticateUser(@RequestBody User user) {
         User auth_user = userService.authenticateUser(user.getUsername(), user.getPassword());
         auth_user.add(Link.of(linkTo(methodOn(UserController.class).getUserDataset(auth_user.getId())).toString()
                 .replace(BasicLinkBuilder.linkToCurrentMapping().toString(), ""), "self"));
@@ -96,7 +96,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "User not valid",
                     content = @Content)
     })
-    public User saveUserDataset(@RequestBody @Valid User user) {
+    public User saveUserDataset(@RequestBody User user) {
         User new_user = userService.saveUserDataset(user);
 
         new_user.add(Link.of(linkTo(methodOn(UserController.class).getUserDataset(new_user.getId())).toString()
@@ -113,7 +113,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "User not valid",
                     content = @Content)
     })
-    public User updateUserDataset(@PathVariable Long id, @RequestBody @Valid User newUser) {
+    public User updateUserDataset(@PathVariable Long id, @RequestBody User newUser) {
         User updated_user = userService.updateUserDataset(id, newUser);
 
         updated_user.add(Link.of(linkTo(methodOn(UserController.class).getUserDataset(updated_user.getId())).toString()
