@@ -2,6 +2,7 @@ package com.blubbax.esa.userManager.User.entity;
 
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +14,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-public class User {
+public class User extends RepresentationModel<User> {
 
     private @Id @GeneratedValue Long id;
 
